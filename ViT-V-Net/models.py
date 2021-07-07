@@ -197,53 +197,18 @@ class Transformer(nn.Module):
 
 
 class Conv3dReLU(nn.Sequential):
-    def __init__(
-            self,
-            in_channels,
-            out_channels,
-            kernel_size,
-            padding=0,
-            stride=1,
-            use_batchnorm=True,
-    ):
-        conv = nn.Conv3d(
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            bias=not (use_batchnorm),
-        )
+    def __init__(self, in_channels, out_channels, kernel_size, padding=0, stride=1, use_batchnorm=True,):
+        conv = nn.Conv3d( in_channels, out_channels, kernel_size, stride=stride, padding=padding, bias=not (use_batchnorm),)
         relu = nn.ReLU(inplace=True)
-
         bn = nn.BatchNorm3d(out_channels)
-
         super(Conv3dReLU, self).__init__(conv, bn, relu)
 
 
 class DecoderBlock(nn.Module):
-    def __init__(
-            self,
-            in_channels,
-            out_channels,
-            skip_channels=0,
-            use_batchnorm=True,
-    ):
+    def __init__(self,in_channels, out_channels, skip_channels=0, use_batchnorm=True,):
         super().__init__()
-        self.conv1 = Conv3dReLU(
-            in_channels + skip_channels,
-            out_channels,
-            kernel_size=3,
-            padding=1,
-            use_batchnorm=use_batchnorm,
-        )
-        self.conv2 = Conv3dReLU(
-            out_channels,
-            out_channels,
-            kernel_size=3,
-            padding=1,
-            use_batchnorm=use_batchnorm,
-        )
+        self.conv1 = Conv3dReLU(in_channels + skip_channels, out_channels, kernel_size=3,padding=1, use_batchnorm=use_batchnorm,)
+        self.conv2 = Conv3dReLU(out_channels, out_channels, kernel_size=3, padding=1, use_batchnorm=use_batchnorm, )
         self.up = nn.Upsample(scale_factor=2, mode='trilinear', align_corners=False)
 
     def forward(self, x, skip=None):
