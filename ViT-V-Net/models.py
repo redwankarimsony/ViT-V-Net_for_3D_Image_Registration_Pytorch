@@ -197,6 +197,13 @@ class Transformer(nn.Module):
 
 
 class Conv3dReLU(nn.Sequential):
+    """
+    This block is used at the Blue Decoding Part. 
+    The block description is as follows. 
+    
+    3D Conv.Layer > Leaky ReLU > Instance Norm. 
+    
+    """
     def __init__(self, in_channels, out_channels, kernel_size, padding=0, stride=1, use_batchnorm=True,):
         conv = nn.Conv3d( in_channels, out_channels, kernel_size, stride=stride, padding=padding, bias=not (use_batchnorm),)
         relu = nn.ReLU(inplace=True)
