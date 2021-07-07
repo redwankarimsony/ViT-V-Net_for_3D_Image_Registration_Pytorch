@@ -205,6 +205,9 @@ class Conv3dReLU(nn.Sequential):
 
 
 class DecoderBlock(nn.Module):
+    """
+    This block is the GEEEN BLOCK at the very end. Conv-up-Block
+    """
     def __init__(self,in_channels, out_channels, skip_channels=0, use_batchnorm=True,):
         super().__init__()
         self.conv1 = Conv3dReLU(in_channels + skip_channels, out_channels, kernel_size=3,padding=1, use_batchnorm=use_batchnorm,)
@@ -212,11 +215,11 @@ class DecoderBlock(nn.Module):
         self.up = nn.Upsample(scale_factor=2, mode='trilinear', align_corners=False)
 
     def forward(self, x, skip=None):
-        x = self.up(x)
-        if skip is not None:
+        x = self.up(x) #green upsample
+        if skip is not None: # concatenation
             x = torch.cat([x, skip], dim=1)
-        x = self.conv1(x)
-        x = self.conv2(x)
+        x = self.conv1(x) # Conv3D > ReLU > BatchNorm3d
+        x = self.conv2(x) # Conv3D > ReLU > BatchNorm3d
         return x
 
 class DecoderCup(nn.Module):
